@@ -1,0 +1,155 @@
+/*
+Az alábbi kódrészlet egy C++ programnyelven írt kód, ami egy beadandó/házi feladat volt.
+Maga a feladat leírása megtalálható a kódban kommentelve, de bővebben kifejtve a feladat az volt, hogy egy mátrix elemeit úgy soroljuk fel, hogy nem balról-jobbra soronként, hanem bal-felső sarokból kiindulva menjünk körkörösen befelé.
+*/
+
+// Illés Nikolasz
+// Neptun-kód: YIOMQ1
+// Feladat-leírás: Sorolja föl egy N×N-es mátrix elemeit az alábbi rajzon jelölt sorrendben!
+//
+// Megjegyzés:
+// Körkös bejárás: Értelmezésem szerint, a mátrixot nem soronként, hanem mint egy kakaóscsigát, körkörösen, járunk körbe.
+
+#include <iostream>
+
+using namespace std;
+
+const int MaxN = 10;
+const int MaxT = 100;
+
+void MeretBeolvasasa(int* n);
+void MatrixBeolvasasa(int matrix[][MaxN], int n);
+void Bejaras(int matrix[][MaxN], int n, int* kimenet);
+
+int main()
+{
+    int N;
+    int Matrix[MaxN][MaxN];
+    int Kimenet[MaxT];
+
+    // Beolvasás
+    MeretBeolvasasa(&N);
+    MatrixBeolvasasa(Matrix, N);
+    Bejaras(Matrix, N, Kimenet);
+
+    // Kiírás
+    clog << "A matrix elemei bejaras szerinti sorredben: " << endl;
+    for (int i = 1; i <= N*N; i++)
+    {
+        cout << Kimenet[i] << " ";
+    }
+
+    return 0;
+}
+
+void MeretBeolvasasa(int* n)
+{
+    bool hiba;
+    string tmp;
+
+    do
+    {
+        clog << "Kerem adja meg az NxN matrix meretet (2..10): ";
+        cin >> *n;
+        hiba = cin.fail() || cin.peek() != '\n' || *n < 2 || *n > MaxN;
+
+        if (hiba)
+        {
+            cerr << "A matrix merete nem lehet kisebb 2-nel vagy nagyobb 100-nal vagy hibas a bemenet!" << endl;
+            cin.clear();
+            cin.ignore(255, '\n');
+        }
+    }
+    while (hiba);
+    getline(cin, tmp);
+}
+
+void MatrixBeolvasasa(int matrix[][MaxN], int n)
+{
+    bool hiba;
+    string tmp;
+
+    clog << "Kerem adja meg egymas ala a matrix elemeit: " << endl;
+
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 1; j <= n; j++)
+        {
+            do
+            {
+                clog << i << "," << j << " eleme: ";
+                cin >> matrix[i][j];
+                hiba = cin.fail();
+
+                if (hiba)
+                {
+                    cerr << "Hibas bemenet! Kerem probalja ujra!" << endl;
+                    cin.clear();
+                    cin.ignore(255, '\n');
+                }
+            }
+            while (hiba);
+            getline(cin, tmp);
+        }
+    }
+
+}
+
+void Bejaras(int matrix[][MaxN], int n, int* kimenet)
+{
+    int meddig;
+    int x = 1;
+    int y = 1;
+    int index = 1;
+
+    if (n % 2 == 0)
+    {
+        meddig = n/2;
+    }
+    else
+    {
+        meddig = n/2+1;
+    }
+
+    for (int i = 1; i <= meddig; i++)
+    {
+        while (y <= n)
+        {
+            kimenet[index] = matrix[x][y];
+            y++;
+            index++;
+        }
+        y--;
+        x++;
+
+        while (x <= n)
+        {
+            kimenet[index] = matrix[x][y];
+            x++;
+            index++;
+        }
+        x--;
+        y--;
+
+        while (y != 0)
+        {
+            kimenet[index] = matrix[x][y];
+            y--;
+            index++;
+        }
+        y++;
+        x--;
+
+        while (x != 1)
+        {
+            kimenet[index] = matrix[x][y];
+            x--;
+            index++;
+        }
+
+        x++;
+        y++;
+        n--;
+    }
+}
+
